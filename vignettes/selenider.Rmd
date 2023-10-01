@@ -1,0 +1,328 @@
+---
+title: "Getting started with selenider"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with selenider}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+available <- selenider::selenider_available()
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = available
+)
+```
+
+```{r, eval = !available, include = FALSE}
+message("Selenider is not available")
+```
+
+This vignette introduces you to the basics of automating a web browser using selenider.
+
+```{r setup}
+library(selenider)
+```
+
+## Starting the session
+To use selenider, you must first start a session with `selenider_session()`. If you don't do this, it
+is done automatically for you, but you may want to change some of the options from their defaults 
+(the backend, for example). Here, we use chromote as a backend (the default), and we set the timeout
+to 10 seconds (the default is 4).
+
+```{r}
+session <- selenider_session(
+  "chromote",
+  timeout = 10
+)
+```
+
+The session, once created, will be set as the *local session* inside the current environment,
+meaning that in this case, it can be accessed anywhere in this script, and will be closed
+automatically when the script finishes running.
+
+One thing to remember is that if you start a session inside a function, it will be closed
+automatically when the function finishes running. If you want to use the session outside the
+function, you need to use the `.env` argument. For example, let's say we want a wrapper
+function around `selenider_session()` that always uses RSelenium:
+
+```{r}
+# Bad (unless you only need to use the session inside the function)
+my_selenider_session <- function(...) {
+  selenider_session("RSelenium", ...)
+  # The session will be closed here
+}
+
+# Good - the session will be open in the caller environment/function
+my_selenider_session <- function(..., .env = rlang::caller_env()) {
+  selenider_session("RSelenium", ..., .env = .env)
+}
+```
+
+Use `open_url()` to navigate to a website. selenider also provides the `back()` and `forward()` functions to easily
+navigate through your search history, and the `reload()` function to reload the current page.
+
+``` {r}
+open_url("https://www.r-project.org/")
+
+open_url("https://www.tidyverse.org/")
+
+back()
+
+forward()
+
+reload()
+```
+
+## Selecting elements
+
+Use `s()` to select an element. By default, CSS selectors are used, but other options are available.
+
+``` {r}
+header <- s("#rStudioHeader")
+
+header
+```
+
+For example, an XPath can be used instead. XPaths can be useful for more complex selectors, and are
+not limited to selecting from the ancestors of the current element. However, they can be difficult
+to read.
+
+```{r}
+s(xpath = "//div/a")
+```
+
+Use `ss()` to select multiple elements.
+
+```{r}
+all_links <- ss("a")
+
+all_links
+```
+
+Use `find_element()` and `find_elements()` to find child elements of an existing element. These can be
+chained with the pipe operator (`|>`) to specify paths to elements. Just like `s()` and `ss()`, a
+variety of selector types are available, but CSS selectors are used by default.
+
+``` {r}
+tidyverse_title <- s("#rStudioHeader") |>
+  find_element("div") |>
+  find_element(".productName")
+
+tidyverse_title
+
+menu_items <- s("#rStudioHeader") |>
+  find_element("#menu") |>
+  find_elements(".menuItem")
+
+menu_items
+```
+
+Use `elem_children()` and friends to find elements using their relative position to another.
+
+```{r}
+s("#menuItems") |>
+  elem_children()
+
+s("#menuItems") |>
+  elem_ancestors()
+```
+
+You can use `elem_filter()` and `elem_find()` to filter collections of elements using a custom function.
+`elem_find()` returns the first matching element, while `elem_filter()` returns all matching elements.
+These functions use the same interface as `elem_expect()`: see the "Expectations" section below.
+
+``` {r}
+# Find the blog item in the menu
+menu_items |>
+  elem_find(has_text("Blog"))
+
+# Find the hex badges on the second row
+s(".hexBadges") |>
+  find_elements("a") |>
+  elem_filter(
+    \(x) substring(elem_attr(x, "class"), 1, 2) == "r2"
+  )
+```
+
+## Interacting with an element
+
+selenider elements are *lazy*, meaning that when you specify the path to an element or group of
+elements, they are not actually located in the DOM until you *do* something with them.
+
+There are three types of functions that force an element to be collected:
+
+* actions (e.g. `elem_click()`)
+* properties (e.g. `elem_text()`)
+* conditions (e.g. `is_visible()`)
+
+Most functions that act on elements use the `elem_` prefix.
+
+## Actions
+
+There are various ways to interact with a HTML element.
+
+Use `elem_click()`, `elem_right_click()`, or `elem_double_click()` to click on an element, and
+`elem_hover()` to hover over an element. Use `elem_scroll_to()` to scroll to an element
+before clicking it, which is useful if the element is not currently in view.
+
+```{r}
+s(".blurb") |>
+  find_element("a") |> # List of packages
+  elem_scroll_to() |>
+  elem_click()
+```
+
+Some links will not work when clicked on, since they will open their content in a new tab.
+Use `open_url()` manually to solve this. This approach is recommended over using `elem_click()`, as it
+is more reliable.
+
+```{r}
+s(".packages") |>
+  find_elements("a") |>
+  elem_find(has_text("dplyr")) |> # Find the link to the dplyr documentation
+  elem_attr("href") |> # Get the URL
+  open_url()
+```
+
+Use `elem_set_value()` to set the value of an input element, and `elem_clear_value()` to clear the value.
+
+```{r}
+s("input[type='search']") |>
+  elem_set_value("filter")
+
+# Go back to the main page
+back()
+back()
+```
+
+selenider also provides a `elem_submit()` function, allowing you to submit a HTML form using any
+element inside the form.
+
+## Properties
+
+HTML elements have a number of accessible properties.
+
+```{r}
+# Get the tag name
+s("#appTidyverseSite") |>
+  elem_name()
+
+# Get the text inside the element
+s(".tagline") |>
+  elem_text()
+
+# Get an attribute
+s(".hexBadges") |>
+  find_element("img") |>
+  elem_attr("alt")
+
+# Get every attribute
+s(".hexBadges") |>
+  find_element("img") |>
+  elem_attrs()
+
+# Get the 'value' attribute (NA in this case)
+s("#homeContent") |>
+  elem_value()
+
+# Get a CSS property
+s(".tagline") |>
+  elem_css_property("font-size")
+```
+
+## Conditions
+
+Conditions are predicate functions on HTML elements. Unlike all other functions in selenider, they
+do not wait for the element to exist or for the condition to be met: they return `TRUE` or `FALSE`
+(or throw an error) instantly. For this reason, they are designed to be used with `elem_expect()`
+and `elem_wait_until()`, which will automatically wait for conditions to be met.
+
+There are a wide range of conditions, many of which do the same thing. Each HTML property has a
+corresponding condition, and selenider also provides conditions for basic checks like `is_present()`,
+`is_visible()` and `is_enabled()`. In the documentation for any condition, you can find all other
+conditions in the "See Also" section.
+
+```{r}
+s(".hexBadges") |>
+  is_present()
+```
+
+## Expectations
+
+selenider provides a concise testing interface using the `elem_expect()` function. Provide an element,
+and one or more conditions, and the function will wait until all the conditions are met. Conditions
+can be functions or simple calls (e.g. `has_text("text")` will be turned into 
+`has_text(<THE ELEMENT>, "text")`). `elem_expect()` tends to work well with R's lambda function
+syntax.
+
+``` {r}
+s(".tagline") |>
+  elem_expect(is_present) |>
+  elem_expect(has_text("data science"))
+
+s(".hexBadges") |>
+  find_element("a") |>
+  elem_expect(is_visible, is_enabled)
+
+s("#menu") |>
+  find_element("#menuItems") |>
+  elem_children() |>
+  elem_expect(has_at_least(4))
+
+s(".productName") |>
+  elem_expect(
+    \(x) substring(elem_text(x), 1, 1) == "T" # Tidyverse starts with T
+  )
+```
+
+Errors try to give as much information as possible. Since we know this condition is going to fail,
+we'll set the timeout to a lower value so we don't have to wait for too long.
+
+```{r, error = TRUE}
+s(".band.first") |>
+  find_element(".blurb") |>
+  find_element("code") |>
+  elem_expect(has_text('install.packages("selenider")'), timeout = 1)
+```
+
+And (`&&`), or (`||`) and not (`!`) can be used as if the conditions were logical values. Additionally,
+you can omit the first argument to `elem_expect()` (but in this case, all conditions must be calls).
+
+``` {r}
+s(".random-class") |>
+  elem_expect(!is_present)
+
+s(".innards") |>
+  elem_expect(is_visible || is_enabled)
+
+elem_1 <- s(".random-class")
+
+elem_2 <- s("#main")
+
+# Test that either the first or second element exists
+elem_expect(is_present(elem_1) || is_present(elem_2))
+```
+
+Use `elem_wait_until()` if you don't want an error to be thrown if a condition is not met.
+`elem_wait_until()` will do the exact same thing as `elem_expect()` but always returns `TRUE`
+or `FALSE`.
+
+```{r}
+elem_wait_until(is_present(elem_1) || is_present(elem_2))
+```
+
+The syntax used for `elem_expect()` and `elem_wait_until()` can also be used in `elem_filter()`
+and `elem_find()` to filter element collections. Additionally, selenider provides
+`elem_expect_all()` and `elem_wait_until_all()` to test a condition on every element
+in a collection.
+
+```{r}
+s(".hexBadges") |>
+  find_elements("a") |>
+  elem_expect_all(is_visible)
+```
+
+Once we are done, we do not need to close the session; it is closed for us automatically!

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Getting started with selenider</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Getting started with selenider</h1>
+
+
+
+<p>This vignette introduces you to the basics of automating a web
+browser using selenider.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(selenider)</span></code></pre></div>
+<div id="starting-the-session" class="section level2">
+<h2>Starting the session</h2>
+<p>To use selenider, you must first start a session with
+<code>selenider_session()</code>. If you don’t do this, it is done
+automatically for you, but you may want to change some of the options
+from their defaults (the backend, for example). Here, we use chromote as
+a backend (the default), and we set the timeout to 10 seconds (the
+default is 4).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="st">&quot;chromote&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">timeout =</span> <span class="dv">10</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>The session, once created, will be set as the <em>local session</em>
+inside the current environment, meaning that in this case, it can be
+accessed anywhere in this script, and will be closed automatically when
+the script finishes running.</p>
+<p>One thing to remember is that if you start a session inside a
+function, it will be closed automatically when the function finishes
+running. If you want to use the session outside the function, you need
+to use the <code>.env</code> argument. For example, let’s say we want a
+wrapper function around <code>selenider_session()</code> that always
+uses RSelenium:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Bad (unless you only need to use the session inside the function)</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>my_selenider_session <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;RSelenium&quot;</span>, ...)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="co"># The session will be closed here</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co"># Good - the session will be open in the caller environment/function</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>my_selenider_session <span class="ot">&lt;-</span> <span class="cf">function</span>(..., <span class="at">.env =</span> rlang<span class="sc">::</span><span class="fu">caller_env</span>()) {</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;RSelenium&quot;</span>, ..., <span class="at">.env =</span> .env)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>}</span></code></pre></div>
+<p>Use <code>open_url()</code> to navigate to a website. selenider also
+provides the <code>back()</code> and <code>forward()</code> functions to
+easily navigate through your search history, and the
+<code>reload()</code> function to reload the current page.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">open_url</span>(<span class="st">&quot;https://www.r-project.org/&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">open_url</span>(<span class="st">&quot;https://www.tidyverse.org/&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="fu">back</span>()</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="fu">forward</span>()</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">reload</span>()</span></code></pre></div>
+</div>
+<div id="selecting-elements" class="section level2">
+<h2>Selecting elements</h2>
+<p>Use <code>s()</code> to select an element. By default, CSS selectors
+are used, but other options are available.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>header <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#rStudioHeader&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>header</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; The first element with css selector &quot;#rStudioHeader&quot;.</span></span></code></pre></div>
+<p>For example, an XPath can be used instead. XPaths can be useful for
+more complex selectors, and are not limited to selecting from the
+ancestors of the current element. However, they can be difficult to
+read.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">s</span>(<span class="at">xpath =</span> <span class="st">&quot;//div/a&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; The first element with xpath &quot;//div/a&quot;.</span></span></code></pre></div>
+<p>Use <code>ss()</code> to select multiple elements.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>all_links <span class="ot">&lt;-</span> <span class="fu">ss</span>(<span class="st">&quot;a&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>all_links</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; The elements with css selector &quot;a&quot;.</span></span></code></pre></div>
+<p>Use <code>find_element()</code> and <code>find_elements()</code> to
+find child elements of an existing element. These can be chained with
+the pipe operator (<code>|&gt;</code>) to specify paths to elements.
+Just like <code>s()</code> and <code>ss()</code>, a variety of selector
+types are available, but CSS selectors are used by default.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>tidyverse_title <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#rStudioHeader&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;div&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;.productName&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>tidyverse_title</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;div&quot;.</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;.productName&quot;.</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>menu_items <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#rStudioHeader&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;#menu&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;.menuItem&quot;</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>menu_items</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;#menu&quot;.</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; • The child elements with css selector &quot;.menuItem&quot;.</span></span></code></pre></div>
+<p>Use <code>elem_children()</code> and friends to find elements using
+their relative position to another.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">elem_children</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#menuItems&quot;.</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; • The direct children.</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">elem_ancestors</span>()</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#menuItems&quot;.</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; • The ancestors.</span></span></code></pre></div>
+<p>You can use <code>elem_filter()</code> and <code>elem_find()</code>
+to filter collections of elements using a custom function.
+<code>elem_find()</code> returns the first matching element, while
+<code>elem_filter()</code> returns all matching elements. These
+functions use the same interface as <code>elem_expect()</code>: see the
+“Expectations” section below.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Find the blog item in the menu</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>menu_items <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">elem_find</span>(<span class="fu">has_text</span>(<span class="st">&quot;Blog&quot;</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;#menu&quot;.</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;.menuItem&quot; matching the following</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt;   condition:</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;   `has_text(&quot;Blog&quot;)`</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co"># Find the hex badges on the second row</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  <span class="fu">elem_filter</span>(</span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>    \(x) <span class="fu">substring</span>(<span class="fu">elem_attr</span>(x, <span class="st">&quot;class&quot;</span>), <span class="dv">1</span>, <span class="dv">2</span>) <span class="sc">==</span> <span class="st">&quot;r2&quot;</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  )</span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;.hexBadges&quot;.</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; • The child elements with css selector &quot;a&quot; matching the following condition:</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt;   `function(x) substring(elem_attr(x, &quot;class&quot;), 1, 2) == &quot;r2&quot;`</span></span></code></pre></div>
+</div>
+<div id="interacting-with-an-element" class="section level2">
+<h2>Interacting with an element</h2>
+<p>selenider elements are <em>lazy</em>, meaning that when you specify
+the path to an element or group of elements, they are not actually
+located in the DOM until you <em>do</em> something with them.</p>
+<p>There are three types of functions that force an element to be
+collected:</p>
+<ul>
+<li>actions (e.g. <code>elem_click()</code>)</li>
+<li>properties (e.g. <code>elem_text()</code>)</li>
+<li>conditions (e.g. <code>is_visible()</code>)</li>
+</ul>
+<p>Most functions that act on elements use the <code>elem_</code>
+prefix.</p>
+</div>
+<div id="actions" class="section level2">
+<h2>Actions</h2>
+<p>There are various ways to interact with a HTML element.</p>
+<p>Use <code>elem_click()</code>, <code>elem_right_click()</code>, or
+<code>elem_double_click()</code> to click on an element, and
+<code>elem_hover()</code> to hover over an element. Use
+<code>elem_scroll_to()</code> to scroll to an element before clicking
+it, which is useful if the element is not currently in view.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.blurb&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span> <span class="co"># List of packages</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">elem_scroll_to</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="fu">elem_click</span>()</span></code></pre></div>
+<p>Some links will not work when clicked on, since they will open their
+content in a new tab. Use <code>open_url()</code> manually to solve
+this. This approach is recommended over using <code>elem_click()</code>,
+as it is more reliable.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.packages&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">elem_find</span>(<span class="fu">has_text</span>(<span class="st">&quot;dplyr&quot;</span>)) <span class="sc">|&gt;</span> <span class="co"># Find the link to the dplyr documentation</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">elem_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="sc">|&gt;</span> <span class="co"># Get the URL</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">open_url</span>()</span></code></pre></div>
+<p>Use <code>elem_set_value()</code> to set the value of an input
+element, and <code>elem_clear_value()</code> to clear the value.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;input[type=&#39;search&#39;]&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">elem_set_value</span>(<span class="st">&quot;filter&quot;</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Go back to the main page</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">back</span>()</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="fu">back</span>()</span></code></pre></div>
+<p>selenider also provides a <code>elem_submit()</code> function,
+allowing you to submit a HTML form using any element inside the
+form.</p>
+</div>
+<div id="properties" class="section level2">
+<h2>Properties</h2>
+<p>HTML elements have a number of accessible properties.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Get the tag name</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#appTidyverseSite&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">elem_name</span>()</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; [1] &quot;div&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># Get the text inside the element</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.tagline&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">elem_text</span>()</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; [1] &quot;\n          R packages for data science\n          &quot;</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># Get an attribute</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;img&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  <span class="fu">elem_attr</span>(<span class="st">&quot;alt&quot;</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dplyr hex sticker&quot;</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co"># Get every attribute</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;img&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>  <span class="fu">elem_attrs</span>()</span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; $src</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; [1] &quot;https://d33wubrfki0l68.cloudfront.net/621a9c8c5d7b47c4b6d72e8f01f28d14310e8370/193fc/css/images/hex/dplyr.png&quot;</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; $alt</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dplyr hex sticker&quot;</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; $class</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; [1] &quot;r1 c0&quot;</span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co"># Get the &#39;value&#39; attribute (NA in this case)</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#homeContent&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a>  <span class="fu">elem_value</span>()</span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co"># Get a CSS property</span></span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.tagline&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a>  <span class="fu">elem_css_property</span>(<span class="st">&quot;font-size&quot;</span>)</span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt; [1] &quot;36px&quot;</span></span></code></pre></div>
+</div>
+<div id="conditions" class="section level2">
+<h2>Conditions</h2>
+<p>Conditions are predicate functions on HTML elements. Unlike all other
+functions in selenider, they do not wait for the element to exist or for
+the condition to be met: they return <code>TRUE</code> or
+<code>FALSE</code> (or throw an error) instantly. For this reason, they
+are designed to be used with <code>elem_expect()</code> and
+<code>elem_wait_until()</code>, which will automatically wait for
+conditions to be met.</p>
+<p>There are a wide range of conditions, many of which do the same
+thing. Each HTML property has a corresponding condition, and selenider
+also provides conditions for basic checks like
+<code>is_present()</code>, <code>is_visible()</code> and
+<code>is_enabled()</code>. In the documentation for any condition, you
+can find all other conditions in the “See Also” section.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">is_present</span>()</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+<div id="expectations" class="section level2">
+<h2>Expectations</h2>
+<p>selenider provides a concise testing interface using the
+<code>elem_expect()</code> function. Provide an element, and one or more
+conditions, and the function will wait until all the conditions are met.
+Conditions can be functions or simple calls
+(e.g. <code>has_text(&quot;text&quot;)</code> will be turned into
+<code>has_text(&lt;THE ELEMENT&gt;, &quot;text&quot;)</code>).
+<code>elem_expect()</code> tends to work well with R’s lambda function
+syntax.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.tagline&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">elem_expect</span>(is_present) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="fu">elem_expect</span>(<span class="fu">has_text</span>(<span class="st">&quot;data science&quot;</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="fu">elem_expect</span>(is_visible, is_enabled)</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menu&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  <span class="fu">elem_children</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  <span class="fu">elem_expect</span>(<span class="fu">has_at_least</span>(<span class="dv">4</span>))</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.productName&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>  <span class="fu">elem_expect</span>(</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>    \(x) <span class="fu">substring</span>(<span class="fu">elem_text</span>(x), <span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">==</span> <span class="st">&quot;T&quot;</span> <span class="co"># Tidyverse starts with T</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Errors try to give as much information as possible. Since we know
+this condition is going to fail, we’ll set the timeout to a lower value
+so we don’t have to wait for too long.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.band.first&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;.blurb&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;code&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="fu">elem_expect</span>(<span class="fu">has_text</span>(<span class="st">&#39;install.packages(&quot;selenider&quot;)&#39;</span>), <span class="at">timeout =</span> <span class="dv">1</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co">#&gt; Error in `elem_expect()`:</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co">#&gt; ! Condition failed after waiting for 1 seconds:</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt; `has_text(&quot;install.packages(\&quot;selenider\&quot;)&quot;)`</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt; ℹ `x` does not have text &quot;install.packages(\&quot;selenider\&quot;)&quot;.</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt; ℹ Actual text: &quot;install.packages(\&quot;tidyverse\&quot;)&quot;.</span></span></code></pre></div>
+<p>And (<code>&amp;&amp;</code>), or (<code>||</code>) and not
+(<code>!</code>) can be used as if the conditions were logical values.
+Additionally, you can omit the first argument to
+<code>elem_expect()</code> (but in this case, all conditions must be
+calls).</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.random-class&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">elem_expect</span>(<span class="sc">!</span>is_present)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.innards&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>  <span class="fu">elem_expect</span>(is_visible <span class="sc">||</span> is_enabled)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>elem_1 <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;.random-class&quot;</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>elem_2 <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#main&quot;</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co"># Test that either the first or second element exists</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="fu">elem_expect</span>(<span class="fu">is_present</span>(elem_1) <span class="sc">||</span> <span class="fu">is_present</span>(elem_2))</span></code></pre></div>
+<p>Use <code>elem_wait_until()</code> if you don’t want an error to be
+thrown if a condition is not met. <code>elem_wait_until()</code> will do
+the exact same thing as <code>elem_expect()</code> but always returns
+<code>TRUE</code> or <code>FALSE</code>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">elem_wait_until</span>(<span class="fu">is_present</span>(elem_1) <span class="sc">||</span> <span class="fu">is_present</span>(elem_2))</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>The syntax used for <code>elem_expect()</code> and
+<code>elem_wait_until()</code> can also be used in
+<code>elem_filter()</code> and <code>elem_find()</code> to filter
+element collections. Additionally, selenider provides
+<code>elem_expect_all()</code> and <code>elem_wait_until_all()</code> to
+test a condition on every element in a collection.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  <span class="fu">elem_expect_all</span>(is_visible)</span></code></pre></div>
+<p>Once we are done, we do not need to close the session; it is closed
+for us automatically!</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
