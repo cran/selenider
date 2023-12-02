@@ -11,7 +11,10 @@ test_that("Conditions work", {
 
   expect_true(is_absent(s(".random-class")))
 
-  expect_error(is_visible(s(".random-class")), class = "selenider_error_absent_element")
+  expect_error(
+    is_visible(s(".random-class")),
+    class = "selenider_error_absent_element"
+  )
 
   expect_false(is_visible(s(".toggleable")))
   expect_true(is_invisible(s(".toggleable")))
@@ -44,14 +47,14 @@ test_that("Conditions work", {
   expect_false(has_exact_text(element, "ell"))
 
   buttons <- elem_children(s(".buttons"))
-  expect_true(has_attr(buttons[[1]], "disabled", NA))
+  expect_true(has_attr(buttons[[1]], "disabled", NULL))
 
   expect_false(has_attr(buttons[[1]], "disabled", ""))
   expect_false(has_attr(buttons[[2]], "disabled", "Something"))
 
   elem_click(s("#toggle_div"))
 
-  expect_true(attr_contains(s(".toggleable"), "style", "display"))
+  elem_expect(s(".toggleable"), attr_contains("style", "display"))
   expect_false(attr_contains(s(".toggleable"), "style", "color"))
 
   submit_button <- find_element(s(".actions-form"), "input[type='submit']")

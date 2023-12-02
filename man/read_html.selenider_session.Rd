@@ -29,8 +29,8 @@ read_html.selenider_element(
 \item{timeout}{How long to wait for \code{x} to exist in the DOM before throwing
 an error.}
 
-\item{outer}{Whether to read the inner (all children of the current element) or
-outer (including the element itself) HTML of \code{x}.}
+\item{outer}{Whether to read the inner (all children of the current element)
+or outer (including the element itself) HTML of \code{x}.}
 }
 \value{
 \code{read_html()} returns an XML document. Note that HTML will always be wrapped

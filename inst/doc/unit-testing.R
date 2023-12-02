@@ -38,7 +38,9 @@ shiny_app <- shinyApp(
   ),
   server = function(input, output) {
     even <- reactive((input$button %% 2) == 0)
-    exportTestValues(even = { even() })
+    exportTestValues(even = {
+      even()
+    })
   }
 )
 

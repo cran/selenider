@@ -31,7 +31,8 @@ state <- function(init) {
 #' A lazy list contains three parts:
 #' * `factory` - Stores `x`.
 #' * `instance` - Stores the current instance of the generator
-#' * `current_value` - Stores the index of the last value that the generator has given.
+#' * `current_value` - Stores the index of the last value that the generator
+#'   has given.
 #'
 #' @noRd
 lazy_list <- function(x) {
@@ -41,7 +42,7 @@ lazy_list <- function(x) {
     current_value = counter()
   )
 
-  class(res) <- "lazy_list"
+  class(res) <- c("lazy_list", "eager_list")
 
   res
 }
@@ -72,7 +73,7 @@ reset_iterator <- function(x) {
 #' this to begin iterating over a lazy list.
 #'
 #' @param x A lazy list.
-#' 
+#'
 #' @returns The first value of `x` (or [coro::exhausted()])
 #'
 #' @noRd
@@ -122,7 +123,7 @@ next_value <- function(x) {
 #' @returns The value at index `i`.
 #'
 #' @noRd
-#' 
+#'
 #' @export
 `[[.lazy_list` <- function(x, i, ...) {
   current_value <- x$current_value$get()
@@ -152,6 +153,8 @@ next_value <- function(x) {
 #' @param i An index.
 #'
 #' @noRd
+#'
+#' @export
 `[[.eager_list` <- function(x, i) {
   if (i > length(x$data)) {
     NULL
@@ -166,7 +169,7 @@ next_value <- function(x) {
 #' an eager list if not. Ensures that normal lists work in lazy list code.
 #'
 #' @param x A list to check.
-#' 
+#'
 #' @returns A lazy/eager list.
 #'
 #' @noRd
@@ -180,8 +183,8 @@ check_lazylist <- function(x) {
 
 #' Convert a normal list to a lazy_list-like object
 #'
-#' Make a normal list compatible with code designed for lazy lists (specifically,
-#' [next_value()] and [next_value_start()]).
+#' Make a normal list compatible with code designed for lazy lists
+#' (specifically, [next_value()] and [next_value_start()]).
 #'
 #' @param x A list
 #'
@@ -210,6 +213,8 @@ eager_list <- function(x) {
 #' @returns Another lazy list, only containing the specified values.
 #'
 #' @noRd
+#'
+#' @export
 `[.lazy_list` <- function(x, i, ...) {
   force(x)
   force(i)
@@ -342,7 +347,7 @@ lazy_flatten <- function(x) {
   generator <- coro::generator(function() {
     value <- next_value_start(x)
 
-    while(!coro::is_exhausted(value)) {
+    while (!coro::is_exhausted(value)) {
       value <- check_lazylist(value)
       inner_value <- next_value_start(value)
 
@@ -409,9 +414,9 @@ lazy_intersect_by <- function(x, .f) {
   generator <- coro::generator(function() {
     first <- x[[1]]
     rest <- x[-1]
-    
+
     value <- next_value_start(first)
-    while(!coro::is_exhausted(value)) {
+    while (!coro::is_exhausted(value)) {
       yield_elem <- TRUE
 
       for (l in rest) {
@@ -428,7 +433,7 @@ lazy_intersect_by <- function(x, .f) {
       value <- next_value(first)
     }
   })
-  
+
   lazy_list(generator)
 }
 
@@ -523,7 +528,9 @@ element_in_eager <- function(x, l, .f) {
 }
 
 length.lazy_list <- function(x) {
-  length(coro::collect(x$instance$get())) + x$current_value$get()
+  result <- length(coro::collect(x$instance$get())) + x$current_value$get()
+  x$current_value$set(result)
+  result
 }
 
 #' @exportS3Method as.list lazy_list
@@ -551,5 +558,13 @@ get_item <- function(x, i) {
     NULL
   } else {
     x[[i]]
+  }
+}
+
+get_items <- function(x, i) {
+  if (!inherits_any(x, c("lazy_list", "eager_list")) && any(i > 0)) {
+    x[i[i <= length(x)]]
+  } else {
+    x[i]
   }
 }

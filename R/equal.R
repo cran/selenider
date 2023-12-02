@@ -53,7 +53,10 @@ elem_equal <- function(x, y, timeout = NULL) {
     stop_not_actionable(
       c(
         "To compare {.arg x} and {.arg y}, both must be present in the DOM.",
-        paste0(format_timeout_for_error(timeout), "{.arg {missing_arg}} was not found.")
+        paste0(
+          format_timeout_for_error(timeout),
+          "{.arg {missing_arg}} was not found."
+        )
       )
     )
   }
@@ -65,10 +68,12 @@ elem_equal <- function(x, y, timeout = NULL) {
   element_x <- get_element(x)
   element_y <- get_element(y)
 
-  if (uses_selenium(x$driver)) {
+  if (x$session == "chromote") {
+    element_x == element_y
+  } else if (x$session == "selenium") {
     selenium_equal(element_x, element_y, driver = x$driver)
   } else {
-    element_x == element_y
+    rselenium_equal(element_x, element_y, driver = x$driver)
   }
 }
 
@@ -80,5 +85,12 @@ elem_equal <- function(x, y, timeout = NULL) {
 }
 
 selenium_equal <- function(x, y, driver) {
-  driver$executeScript("return arguments[0].isSameNode(arguments[1])", list(x, y))[[1]]
+  driver$execute_script("return arguments[0].isSameNode(arguments[1])", x, y)
+}
+
+rselenium_equal <- function(x, y, driver) {
+  driver$executeScript(
+    "return arguments[0].isSameNode(arguments[1])",
+    list(x, y)
+  )[[1]]
 }

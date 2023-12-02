@@ -15,7 +15,6 @@ find_element(x, ...)
   id = NULL,
   class_name = NULL,
   name = NULL,
-  link_text = NULL,
   ...
 )
 
@@ -26,7 +25,6 @@ find_element(x, ...)
   id = NULL,
   class_name = NULL,
   name = NULL,
-  link_text = NULL,
   ...
 )
 }
@@ -44,9 +42,6 @@ find_element(x, ...)
 \item{class_name}{The class name of the element you want to select.}
 
 \item{name}{The name attribute of the element you want to select.}
-
-\item{link_text}{The link text of the link element that you would like to
-select.}
 }
 \value{
 A \code{selenider_element} object.
@@ -59,16 +54,16 @@ of other methods.
 If more than one method is used to select an element (e.g. \code{css} and
 \code{xpath}), the first element which satisfies all conditions will be found.
 
-CSS selectors are generally recommended over other options, since they are usually
-the easiest to read. Use \code{"tag_name"} to select by tag name, \code{".class"} to select
-by class, and \code{"#id"} to select by id.
+CSS selectors are generally recommended over other options, since they are
+usually the easiest to read. Use \code{"tag_name"} to select by tag name,
+\code{".class"} to select by class, and \code{"#id"} to select by id.
 }
 \examples{
 \dontshow{if (selenider::selenider_available(online = FALSE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 html <- "
 <div class='class1'>
   <div id='id1'>
-    <a href='https://r-project.org'>Click me!</a>
+    <p class='class2'>Example text</p>
   </div>
   <p>Example text</p>
 </div>
@@ -80,7 +75,7 @@ session |>
   find_element("div")
 
 session |>
-  find_element(name = "div") |>
+  find_element("div") |>
   find_element(xpath = "./p")
 
 s("div") |>
@@ -88,14 +83,15 @@ s("div") |>
 
 s("div") |>
   find_element(id = "id1") |>
-  find_element(link_text = "Click me!")
+  find_element(class_name = "class2")
+
+s(xpath = "//div[contains(@class, 'class1')]/div/p")
 
 # Complex Xpath expressions are easier to read as chained CSS selectors.
-s("//div[contains(@class, 'class1')]/div/a")
-
+# This is equivalent to above
 s("div.class1") |>
   find_element("div") |>
-  find_element("a")
+  find_element("p")
 
 \dontshow{
 # Clean up all connections and invalidate default chromote object

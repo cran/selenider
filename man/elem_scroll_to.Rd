@@ -32,7 +32,8 @@ function checkScrolled() {
   let element = document.getElementsByTagName('p').item(0);
   let rect = element.getBoundingClientRect();
   // If paragraph is in view
-  if (rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)) {
+  const height = window.innerHeight || document.documentElement.clientHeight;
+  if (rect.bottom <= height) {
     element.innerText = 'You found me!';
   }
 }
@@ -58,6 +59,7 @@ selenider_cleanup()
 Other actions: 
 \code{\link{elem_click}()},
 \code{\link{elem_hover}()},
+\code{\link{elem_select}()},
 \code{\link{elem_set_value}()},
 \code{\link{elem_submit}()}
 }

@@ -23,13 +23,15 @@ clicking or interacting with it.
 \examples{
 \dontshow{if (selenider::selenider_available(online = FALSE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 html <- "
-<button onmouseover = settext()> </button>
+<button onmouseover = settext()></button>
 <p class = 'text'></p>
 "
 
 js <- "
 function settext() {
-  document.getElementsByClassName('text').item(0).innerHTML = 'Button hovered!'
+  const element = document.getElementsByClassName('text').item(0);
+
+  element.innerHTML = 'Button hovered!';
 }
 "
 
@@ -52,6 +54,7 @@ selenider_cleanup()
 Other actions: 
 \code{\link{elem_click}()},
 \code{\link{elem_scroll_to}()},
+\code{\link{elem_select}()},
 \code{\link{elem_set_value}()},
 \code{\link{elem_submit}()}
 }

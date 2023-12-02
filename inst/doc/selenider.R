@@ -21,13 +21,13 @@ session <- selenider_session(
 ## -----------------------------------------------------------------------------
 # Bad (unless you only need to use the session inside the function)
 my_selenider_session <- function(...) {
-  selenider_session("RSelenium", ...)
+  selenider_session("selenium", ...)
   # The session will be closed here
 }
 
 # Good - the session will be open in the caller environment/function
 my_selenider_session <- function(..., .env = rlang::caller_env()) {
-  selenider_session("RSelenium", ..., .env = .env)
+  selenider_session("selenium", ..., .env = .env)
 }
 
 ## -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ menu_items |>
 
 # Find the hex badges on the second row
 s(".hexBadges") |>
-  find_elements("a") |>
+  find_elements("img") |>
   elem_filter(
     \(x) substring(elem_attr(x, "class"), 1, 2) == "r2"
   )
@@ -126,7 +126,7 @@ s(".hexBadges") |>
   find_element("img") |>
   elem_attrs()
 
-# Get the 'value' attribute (NA in this case)
+# Get the 'value' attribute (`NULL` in this case)
 s("#homeContent") |>
   elem_value()
 

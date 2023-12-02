@@ -9,7 +9,7 @@ open_url(url, session = NULL)
 \arguments{
 \item{url}{The URL to navigate to: a string.}
 
-\item{session}{A `selenider_session object. If not specified, the global
+\item{session}{A \code{selenider_session} object. If not specified, the global
 session object (the result of \code{\link[=get_session]{get_session()}}) is used.}
 }
 \value{
@@ -37,6 +37,7 @@ selenider_cleanup()
 \seealso{
 Other global actions: 
 \code{\link{back}()},
+\code{\link{current_url}()},
 \code{\link{execute_js_fn}()},
 \code{\link{get_page_source}()},
 \code{\link{reload}()},

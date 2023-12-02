@@ -15,7 +15,6 @@ find_elements(x, ...)
   id = NULL,
   class_name = NULL,
   name = NULL,
-  link_text = NULL,
   ...
 )
 
@@ -26,7 +25,6 @@ find_elements(x, ...)
   id = NULL,
   class_name = NULL,
   name = NULL,
-  link_text = NULL,
   ...
 )
 }
@@ -44,9 +42,6 @@ find_elements(x, ...)
 \item{class_name}{The class name of the element you want to select.}
 
 \item{name}{The name attribute of the element you want to select.}
-
-\item{link_text}{The link text of the link element that you would like to
-select.}
 }
 \value{
 A \code{selenider_elements} object.
@@ -84,7 +79,7 @@ ss("div")
 session |>
   find_element("#outer-div") |>
   find_elements("p")
-  
+
 # The above can be shortened to:
 s("#outer-div") |>
   find_elements("p")
@@ -100,8 +95,8 @@ selenider_cleanup()
 \item \code{\link[=ss]{ss()}} to quickly select multiple elements without specifying the session.
 \item \code{\link[=find_element]{find_element()}} to select multiple elements.
 \item \code{\link[=selenider_session]{selenider_session()}} to begin a session.
-\item \code{\link[=elem_children]{elem_children()}} and family to select elements using their relative position
-in the DOM.
+\item \code{\link[=elem_children]{elem_children()}} and family to select elements using their relative
+position in the DOM.
 \item \code{\link[=elem_filter]{elem_filter()}} and \code{\link[=elem_find]{elem_find()}} for filtering element collections.
 }
 }

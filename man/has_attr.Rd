@@ -18,8 +18,8 @@ has_value(x, value)
 \item{name}{The name of the attribute.}
 
 \item{value}{The value of the attribute. For \code{has_attr()} and \code{has_value()},
-this can be a string or a numeric value, while \code{attr_contains()} can only take
-a string.}
+this can be a string or a numeric value, while \code{attr_contains()} can only
+take a string.}
 }
 \value{
 A boolean value: TRUE or FALSE.
@@ -34,7 +34,7 @@ element's value matches a string or number.
 \examples{
 \dontshow{if (selenider::selenider_available(online = FALSE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 html <- "
-<input class='myclass' value='1.0' data-customattr='Custom attribute text'></p>
+<input class='myclass' value='1.0' data-customattr='Custom attribute text'>
 "
 
 session <- minimal_selenider_session(html)

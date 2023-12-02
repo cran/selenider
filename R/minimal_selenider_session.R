@@ -25,7 +25,11 @@
 #' }
 #'
 #' @export
-minimal_selenider_session <- function(html, js = NULL, ..., .env = rlang::caller_env()) { # nocov start
+minimal_selenider_session <- function(html,
+                                      js = NULL,
+                                      ...,
+                                      .env = rlang::caller_env()) {
+  # nocov start
   check_string(js, allow_null = TRUE)
   if (!is.character(html) || length(html) != 1) {
     if (inherits_any(html, c("xml_missing", "xml_node", "xml_nodeset"))) {
@@ -48,10 +52,7 @@ minimal_selenider_session <- function(html, js = NULL, ..., .env = rlang::caller
     )
   }
 
-  file <- withr::local_tempfile(fileext = ".html", .local_envir = .env)
-  print(file)
-  writeLines(html, file(file))
   session <- selenider_session(..., .env = .env)
-  open_url(paste0("file://", file), session = session)
+  open_url(paste0("data:text/html,", utils::URLencode(html)), session = session)
   session
 } # nocov end

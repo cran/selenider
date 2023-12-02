@@ -6,7 +6,7 @@
 \alias{elem_value}
 \title{Get attributes of an element}
 \usage{
-elem_attr(x, name, default = NA_character_, timeout = NULL)
+elem_attr(x, name, default = NULL, timeout = NULL)
 
 elem_attrs(x, timeout = NULL)
 
@@ -22,8 +22,8 @@ the element.}
 
 \item{timeout}{The time to wait for \code{x} to exist.}
 
-\item{ptype}{The type to cast the value to. Useful when the value is an integer
-or decimal number. By default, the value is returned as a string.}
+\item{ptype}{The type to cast the value to. Useful when the value is an
+integer or decimal number. By default, the value is returned as a string.}
 }
 \value{
 \code{elem_attr()} returns a character vector of length 1. \code{elem_attrs()}

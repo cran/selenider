@@ -364,16 +364,16 @@ function, it will be closed automatically when the function finishes
 running. If you want to use the session outside the function, you need
 to use the <code>.env</code> argument. For example, let’s say we want a
 wrapper function around <code>selenider_session()</code> that always
-uses RSelenium:</p>
+uses selenium:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Bad (unless you only need to use the session inside the function)</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>my_selenider_session <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;RSelenium&quot;</span>, ...)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;selenium&quot;</span>, ...)</span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="co"># The session will be closed here</span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>}</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co"># Good - the session will be open in the caller environment/function</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>my_selenider_session <span class="ot">&lt;-</span> <span class="cf">function</span>(..., <span class="at">.env =</span> rlang<span class="sc">::</span><span class="fu">caller_env</span>()) {</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;RSelenium&quot;</span>, ..., <span class="at">.env =</span> .env)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="fu">selenider_session</span>(<span class="st">&quot;selenium&quot;</span>, ..., <span class="at">.env =</span> .env)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>}</span></code></pre></div>
 <p>Use <code>open_url()</code> to navigate to a website. selenider also
 provides the <code>back()</code> and <code>forward()</code> functions to
@@ -396,21 +396,45 @@ are used, but other options are available.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>header <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#rStudioHeader&quot;</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>header</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; The first element with css selector &quot;#rStudioHeader&quot;.</span></span></code></pre></div>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; &lt;div id=&quot;rStudioHeader&quot;&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;   \n          &lt;div class=&quot;band&quot;&gt;\n            &lt;div class=&quot;innards bandContent ...</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; &lt;/div&gt;</span></span></code></pre></div>
 <p>For example, an XPath can be used instead. XPaths can be useful for
 more complex selectors, and are not limited to selecting from the
 ancestors of the current element. However, they can be difficult to
 read.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">s</span>(<span class="at">xpath =</span> <span class="st">&quot;//div/a&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; The first element with xpath &quot;//div/a&quot;.</span></span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; &lt;a class=&quot;productName&quot; href=&quot;/&quot;&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt;   Tidyverse</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; &lt;/a&gt;</span></span></code></pre></div>
 <p>Use <code>ss()</code> to select multiple elements.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>all_links <span class="ot">&lt;-</span> <span class="fu">ss</span>(<span class="st">&quot;a&quot;</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>all_links</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; The elements with css selector &quot;a&quot;.</span></span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (24) }</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a class=&quot;productName&quot; href=&quot;/&quot;&gt;Tidyverse&lt;/a&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a class=&quot;menuItem &quot; href=&quot;/packages/&quot;&gt;Packages&lt;/a&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; [3] &lt;a class=&quot;menuItem &quot; href=&quot;/blog/&quot;&gt;Blog&lt;/a&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; [4] &lt;a class=&quot;menuItem &quot; href=&quot;/learn/&quot;&gt;Learn&lt;/a&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; [5] &lt;a class=&quot;menuItem &quot; href=&quot;/help/&quot;&gt;Help&lt;/a&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; [6] &lt;a class=&quot;menuItem &quot; href=&quot;/contribute/&quot;&gt;Contribute&lt;/a&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; [7] &lt;a href=&quot;https://dplyr.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/dplyr.png&quot; al ...</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; [8] &lt;a href=&quot;https://ggplot2.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/ggplot2.png ...</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; [9] &lt;a href=&quot;https://readr.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/readr.png&quot; al ...</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; [10] &lt;a href=&quot;https://forcats.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/forcats.png ...</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; [11] &lt;a href=&quot;https://stringr.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/stringr.png ...</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; [12] &lt;a href=&quot;https://tibble.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/tibble.png&quot;  ...</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; [13] &lt;a href=&quot;https://tidyr.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/tidyr.png&quot; al ...</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; [14] &lt;a href=&quot;https://purrr.tidyverse.org&quot;&gt;&lt;img src=&quot;/css/images/hex/purrr.png&quot; al ...</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; [15] &lt;a href=&quot;/packages&quot;&gt;collection of R packages&lt;/a&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; [16] &lt;a href=&quot;http://r4ds.had.co.nz/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;online&lt;/a&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; [17] &lt;a href=&quot;http://amzn.to/2aHLAQ1&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;the book&lt;/a&gt;</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; [18] &lt;a href=&quot;/learn/&quot;&gt;resource&lt;/a&gt;</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; [19] &lt;a href=&quot;http://amzn.to/2aHLAQ1&quot;&gt;&lt;img class=&quot;bookCover&quot; src=&quot;/images/cover.pn ...</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; [20] &lt;a href=&quot;/help/#reprex&quot;&gt;reprex&lt;/a&gt;</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; ...</span></span></code></pre></div>
 <p>Use <code>find_element()</code> and <code>find_elements()</code> to
 find child elements of an existing element. These can be chained with
 the pipe operator (<code>|&gt;</code>) to specify paths to elements.
@@ -421,33 +445,44 @@ types are available, but CSS selectors are used by default.</p>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;.productName&quot;</span>)</span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>tidyverse_title</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;div&quot;.</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;.productName&quot;.</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; &lt;a class=&quot;productName&quot; href=&quot;/&quot;&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt;   Tidyverse</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; &lt;/a&gt;</span></span>
 <span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>menu_items <span class="ot">&lt;-</span> <span class="fu">s</span>(<span class="st">&quot;#rStudioHeader&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;#menu&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;.menuItem&quot;</span>)</span>
 <span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
 <span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>menu_items</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;#menu&quot;.</span></span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; • The child elements with css selector &quot;.menuItem&quot;.</span></span></code></pre></div>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (5) }</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a class=&quot;menuItem &quot; href=&quot;/packages/&quot;&gt;Packages&lt;/a&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a class=&quot;menuItem &quot; href=&quot;/blog/&quot;&gt;Blog&lt;/a&gt;</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; [3] &lt;a class=&quot;menuItem &quot; href=&quot;/learn/&quot;&gt;Learn&lt;/a&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; [4] &lt;a class=&quot;menuItem &quot; href=&quot;/help/&quot;&gt;Help&lt;/a&gt;</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; [5] &lt;a class=&quot;menuItem &quot; href=&quot;/contribute/&quot;&gt;Contribute&lt;/a&gt;</span></span></code></pre></div>
 <p>Use <code>elem_children()</code> and friends to find elements using
 their relative position to another.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">elem_children</span>()</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#menuItems&quot;.</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; • The direct children.</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="fu">elem_ancestors</span>()</span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#menuItems&quot;.</span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; • The ancestors.</span></span></code></pre></div>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (5) }</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a class=&quot;menuItem &quot; href=&quot;/packages/&quot;&gt;Packages&lt;/a&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a class=&quot;menuItem &quot; href=&quot;/blog/&quot;&gt;Blog&lt;/a&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; [3] &lt;a class=&quot;menuItem &quot; href=&quot;/learn/&quot;&gt;Learn&lt;/a&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; [4] &lt;a class=&quot;menuItem &quot; href=&quot;/help/&quot;&gt;Help&lt;/a&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; [5] &lt;a class=&quot;menuItem &quot; href=&quot;/contribute/&quot;&gt;Contribute&lt;/a&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#menuItems&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  <span class="fu">elem_ancestors</span>()</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (8) }</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; [1] &lt;html lang=&quot;en-us&quot;&gt;&lt;head&gt;\n\n\n\n\n\n&lt;link rel=&quot;stylesheet&quot; href=&quot;/css/fonts. ...</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; [2] &lt;body&gt;\n    &lt;div id=&quot;appTidyverseSite&quot;&gt;\n      &lt;div id=&quot;main&quot;&gt;\n        \n    ...</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; [3] &lt;div id=&quot;appTidyverseSite&quot;&gt;\n      &lt;div id=&quot;main&quot;&gt;\n        \n        &lt;div id ...</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; [4] &lt;div id=&quot;main&quot;&gt;\n        \n        &lt;div id=&quot;rStudioHeader&quot;&gt;\n          &lt;div c ...</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; [5] &lt;div id=&quot;rStudioHeader&quot;&gt;\n          &lt;div class=&quot;band&quot;&gt;\n            &lt;div clas ...</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; [6] &lt;div class=&quot;band&quot;&gt;\n            &lt;div class=&quot;innards bandContent&quot;&gt;\n           ...</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; [7] &lt;div class=&quot;innards bandContent&quot;&gt;\n              &lt;div&gt;\n                &lt;a cl ...</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; [8] &lt;div id=&quot;menu&quot;&gt;\n  &lt;div id=&quot;menuToggler&quot;&gt;&lt;/div&gt;\n  &lt;div id=&quot;menuItems&quot; class= ...</span></span></code></pre></div>
 <p>You can use <code>elem_filter()</code> and <code>elem_find()</code>
 to filter collections of elements using a custom function.
 <code>elem_find()</code> returns the first matching element, while
@@ -457,23 +492,21 @@ functions use the same interface as <code>elem_expect()</code>: see the
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Find the blog item in the menu</span></span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>menu_items <span class="sc">|&gt;</span></span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">elem_find</span>(<span class="fu">has_text</span>(<span class="st">&quot;Blog&quot;</span>))</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;#rStudioHeader&quot;.</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;#menu&quot;.</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; • The first child element with css selector &quot;.menuItem&quot; matching the following</span></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt;   condition:</span></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;   `has_text(&quot;Blog&quot;)`</span></span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co"># Find the hex badges on the second row</span></span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  <span class="fu">elem_filter</span>(</span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>    \(x) <span class="fu">substring</span>(<span class="fu">elem_attr</span>(x, <span class="st">&quot;class&quot;</span>), <span class="dv">1</span>, <span class="dv">2</span>) <span class="sc">==</span> <span class="st">&quot;r2&quot;</span></span>
-<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  )</span>
-<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; A collection of selenider elements selecting:</span></span>
-<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; • The first element with css selector &quot;.hexBadges&quot;.</span></span>
-<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; • The child elements with css selector &quot;a&quot; matching the following condition:</span></span>
-<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt;   `function(x) substring(elem_attr(x, &quot;class&quot;), 1, 2) == &quot;r2&quot;`</span></span></code></pre></div>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; &lt;a class=&quot;menuItem &quot; href=&quot;/blog/&quot;&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;   Blog</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; &lt;/a&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co"># Find the hex badges on the second row</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.hexBadges&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>  <span class="fu">find_elements</span>(<span class="st">&quot;img&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>  <span class="fu">elem_filter</span>(</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>    \(x) <span class="fu">substring</span>(<span class="fu">elem_attr</span>(x, <span class="st">&quot;class&quot;</span>), <span class="dv">1</span>, <span class="dv">2</span>) <span class="sc">==</span> <span class="st">&quot;r2&quot;</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  )</span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (3) }</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; [1] &lt;img src=&quot;/css/images/hex/ggplot2.png&quot; alt=&quot;ggplot2 hex sticker&quot; class=&quot;r2 c0&quot;&gt;</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; [2] &lt;img src=&quot;/css/images/hex/forcats.png&quot; alt=&quot;forcats hex sticker&quot; class=&quot;r2 c1&quot;&gt;</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; [3] &lt;img src=&quot;/css/images/hex/tibble.png&quot; alt=&quot;tibble hex sticker&quot; class=&quot;r2 c2&quot;&gt;</span></span></code></pre></div>
 </div>
 <div id="interacting-with-an-element" class="section level2">
 <h2>Interacting with an element</h2>
@@ -547,7 +580,7 @@ form.</p>
 <span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>  <span class="fu">find_element</span>(<span class="st">&quot;img&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>  <span class="fu">elem_attrs</span>()</span>
 <span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; $src</span></span>
-<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; [1] &quot;https://d33wubrfki0l68.cloudfront.net/621a9c8c5d7b47c4b6d72e8f01f28d14310e8370/193fc/css/images/hex/dplyr.png&quot;</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; [1] &quot;/css/images/hex/dplyr.png&quot;</span></span>
 <span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; $alt</span></span>
 <span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dplyr hex sticker&quot;</span></span>
@@ -555,10 +588,10 @@ form.</p>
 <span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; $class</span></span>
 <span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; [1] &quot;r1 c0&quot;</span></span>
 <span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a></span>
-<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co"># Get the &#39;value&#39; attribute (NA in this case)</span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co"># Get the &#39;value&#39; attribute (`NULL` in this case)</span></span>
 <span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;#homeContent&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a>  <span class="fu">elem_value</span>()</span>
-<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
 <span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a></span>
 <span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co"># Get a CSS property</span></span>
 <span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="fu">s</span>(<span class="st">&quot;.tagline&quot;</span>) <span class="sc">|&gt;</span></span>
