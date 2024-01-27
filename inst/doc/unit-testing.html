@@ -444,16 +444,16 @@ instead.</p>
 <span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>})</span>
 <span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/RtmpBSV71G/st2-194eb27e8e1f8/001_.png</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/Rtmps2LiwF/st2-c6521010df64/001_.png</span></span>
 <span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/RtmpBSV71G/st2-194eb27e8e1f8/001.json</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/Rtmps2LiwF/st2-c6521010df64/001.json</span></span>
 <span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/RtmpBSV71G/st2-194eb27e8e1f8/002_.png</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/Rtmps2LiwF/st2-c6521010df64/002_.png</span></span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/RtmpBSV71G/st2-194eb27e8e1f8/002.json</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; New path: /home/ashbythorpe/tmp/Rtmps2LiwF/st2-c6521010df64/002.json</span></span>
 <span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; Test passed</span></span></code></pre></div>
 <p>Note the difference in styles: while in selenider you must specify
 tests explicitly, shinytest2 uses a snapshot-based approach (specifying
@@ -494,15 +494,13 @@ you don’t run out of memory.</p>
 Automating a browser with Selenium consists of two parts: the server and
 the client. By default, <code>selenider_session()</code> tries to setup
 both, but we can stop this from happening by using the
-<code>create_selenium_client()</code> function, and passing the result
-into the <code>driver</code> argument to
-<code>selenider_session()</code>.</p>
+<code>options</code> argument.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="st">&quot;selenium&quot;</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">browser =</span> <span class="st">&quot;firefox&quot;</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">driver =</span> <span class="fu">create_selenium_client</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">browser =</span> <span class="st">&quot;firefox&quot;</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">port =</span> <span class="dv">4444</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">browser =</span> <span class="st">&quot;firefox&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">selenium_options</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">server_options =</span> <span class="cn">NULL</span>, <span class="co"># Stop selenider from creating a server</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">client_options =</span> <span class="fu">selenium_client_options</span>(<span class="at">port =</span> 4444L) <span class="co"># Use the port of the server</span></span>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  )</span>
 <span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>)</span></code></pre></div>
 <p>The session can then by used as usual. selenider will no longer be

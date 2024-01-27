@@ -54,10 +54,5 @@ session <- minimal_selenider_session(html)
 
 read_html(session)
 read_html(s("div"))
-
-\dontshow{
-# Clean up all connections and invalidate default chromote object
-selenider_cleanup()
-}
 \dontshow{\}) # examplesIf}
 }

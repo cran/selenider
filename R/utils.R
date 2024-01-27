@@ -114,7 +114,11 @@ selenider_available_chromote <- function() {
     is_installed("chromote") &&
     tryCatch(
       {
-        !is.null(suppressMessages(chromote::find_chrome()))
+        result <- !is.null(suppressMessages(chromote::find_chrome()))
+        if (result && is_check()) {
+          Sys.setenv("_R_CHECK_CONNECTIONS_LEFT_OPEN_" = "FALSE")
+        }
+        result
       },
       error = function(e) FALSE
     )
@@ -186,14 +190,6 @@ get_comparison_function <- function(driver) {
     compare_selenium
   } else {
     compare_rselenium
-  }
-}
-
-`%||%` <- function(x, y) {
-  if (is.null(x)) {
-    y
-  } else {
-    x
   }
 }
 
@@ -308,10 +304,17 @@ uses_chromote <- function(x) {
 execute_js_fn_on <- function(fn, x, session, driver) {
   if (session == "chromote") {
     script <- paste0("function() { return (", fn, ")(this) }")
-    driver$Runtime$callFunctionOn(
+    result <- driver$Runtime$callFunctionOn(
       script,
-      chromote_object_id(backend_id = x, driver = driver)
-    )$result$value
+      chromote_object_id(backend_id = x, driver = driver),
+      returnByValue = TRUE
+    )
+
+    if (!is.null(result$exceptionDetails)) {
+      print(result$exceptionDetails)
+    }
+
+    result$result$value
   } else {
     script <- paste0("let fn = ", fn, ";", "return fn(arguments[0]);")
     if (session == "selenium") {
@@ -340,11 +343,18 @@ execute_js_fn_on_multiple <- function(fn, x, session, driver) {
       list(objectId = chromote_object_id(backend_id = y, driver = driver))
     })
 
-    driver$Runtime$callFunctionOn(
+    result <- driver$Runtime$callFunctionOn(
       script,
       chromote_object_id(backend_id = x[[1]], driver = driver),
-      arguments = other_elements
+      arguments = other_elements,
+      returnByValue = TRUE
     )
+
+    if (!is.null(result$exceptionDetails)) {
+      print(result$exceptionDetails)
+    }
+
+    result$result$value
   } else {
     script <- paste0("let fn = ", fn, ";", "return fn(Array.from(arguments));")
     if (session == "selenium") {
@@ -370,27 +380,3 @@ is_windows <- function() .Platform$OS.type == "windows"
 is_mac <- function() Sys.info()[["sysname"]] == "Darwin"
 
 is_linux <- function() Sys.info()[["sysname"]] == "Linux"
-
-#' Clean up after an example
-#'
-#' Clean up after a selenider example, making sure all deferred events are run.
-#'
-#' @param env The environment in which deferred events are contained.
-#'
-#' @keywords internal
-#'
-#' @returns Nothing
-#'
-#' @export
-selenider_cleanup <- function(env = rlang::caller_env()) { # nocov start
-  if (is_check()) {
-    Sys.setenv("_R_CHECK_CONNECTIONS_LEFT_OPEN_" = "FALSE")
-  }
-  try_fetch(
-    withr::deferred_run(env),
-    error = function(e) {
-      rlang::abort(c("Error in withr::deferred_run()"), parent = e)
-    }
-  )
-  return(invisible())
-} # nocov end

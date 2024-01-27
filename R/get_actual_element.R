@@ -45,7 +45,7 @@
 #' elem <- s("div") |>
 #'   get_actual_element()
 #'
-#' # The webDriver/ChromoteSession can be accessed using session$driver
+#' # The ChromoteSession/SeleniumSession can be accessed using session$driver
 #' driver <- session$driver
 #'
 #' if (inherits(driver, "ChromoteSession")) {
@@ -61,11 +61,6 @@
 #'   driver$DOM$describeNode(backendNodeId = elems[[1]])
 #' } else if (inherits(elems[[1]], "WebElement")) {
 #'   elems[[1]]$get_rect()
-#' }
-#'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
 #' }
 #'
 #' @export

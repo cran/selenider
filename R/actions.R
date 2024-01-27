@@ -44,11 +44,6 @@
 #'
 #' elem_expect(s("p"), is_visible)
 #'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
-#' }
-#'
 #' @family actions
 #'
 #' @export
@@ -141,13 +136,13 @@ element_click <- function(x, session, driver) {
   } else if (session == "selenium") {
     x$click()
   } else {
-    left_click_selenium(x, driver)
+    left_click_rselenium(x, driver)
   }
 }
 
-left_click_selenium <- function(element, driver) {
+left_click_rselenium <- function(element, driver) {
   if (driver$browserName == "internet explorer" &&
-    identical(element$getElementTagName(), "checkbox")) {
+        identical(element$getElementTagName(), "checkbox")) {
     try(
       {
         driver$executeScript(
@@ -178,7 +173,7 @@ left_click_selenium <- function(element, driver) {
 click_chromote <- function(element, driver, type = "left", count = 1) {
   chromote_scroll_into_view_if_needed(backend_id = element, driver = driver)
 
-  coords <- chromote_get_xy(backend_id = element, driver = driver)
+  coords <- chromote_clickable_point(backend_id = element, driver = driver)
   x <- coords$x
   y <- coords$y
 
@@ -400,11 +395,14 @@ element_right_click <- function(x, session, driver) {
 
 #' Hover over an element
 #'
-#' Move the mouse over to an HTML element and hover over it, without actually
-#' clicking or interacting with it.
+#' @description
+#' `elem_hover()` moves the mouse over to an HTML element and hovers over it,
+#' without actually clicking or interacting with it.
+#'
+#' `elem_focus()` focuses an HTML element.
 #'
 #' @param x A `selenider_element` object.
-#' @param js Whether to hover the element using JavaScript.
+#' @param js Whether to hover over the element using JavaScript.
 #' @param timeout How long to wait for the element to exist.
 #'
 #' @returns `x`, invisibly.
@@ -434,10 +432,8 @@ element_right_click <- function(x, session, driver) {
 #'
 #' elem_expect(s(".text"), has_text("Button hovered!"))
 #'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
-#' }
+#' s("button") |>
+#'   elem_focus()
 #'
 #' @export
 elem_hover <- function(x, js = FALSE, timeout = NULL) {
@@ -516,11 +512,51 @@ element_hover <- function(x, session, driver) {
 hover_chromote <- function(element, driver) {
   chromote_scroll_into_view_if_needed(backend_id = element, driver = driver)
 
-  coords <- chromote_get_xy(backend_id = element, driver = driver)
+  coords <- chromote_clickable_point(backend_id = element, driver = driver)
   x <- coords$x
   y <- coords$y
 
-  driver$Input$dispatchMouseEvent(type = "mouseMoved", x = x, y = y)
+  driver$Input$dispatchMouseEvent(
+    type = "mouseMoved",
+    x = x,
+    y = y,
+    button = "middle",
+  )
+}
+
+#' @rdname elem_hover
+#'
+#' @export
+elem_focus <- function(x, timeout = NULL) {
+  check_class(x, "selenider_element")
+  check_number_decimal(timeout, allow_null = TRUE)
+
+  timeout <- get_timeout(timeout, x$timeout)
+
+  element <- get_element_for_action(
+    x,
+    action = "focus {.arg x}",
+    conditions = list(is_visible),
+    timeout = timeout,
+    failure_messages = c("was not visible"),
+    conditions_text = c("be visible")
+  )
+
+  element_focus(element, x$session, x$driver)
+
+  invisible(x)
+}
+
+element_focus <- function(x, session, driver) {
+  if (session == "chromote") {
+    chromote_focus(x, driver = driver)
+  } else {
+    execute_js_fn_on("x => x.focus()", x, session = session, driver = driver)
+  }
+}
+
+chromote_focus <- function(x, driver) {
+  driver$DOM$focus(backendNodeId = x)
 }
 
 #' Set the value of an input
@@ -583,11 +619,6 @@ hover_chromote <- function(element, driver) {
 #'
 #' elem_expect(s("p"), has_text("Enter pressed!"))
 #'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
-#' }
-#'
 #' @family actions
 #'
 #' @export
@@ -615,29 +646,109 @@ elem_set_value <- function(x, text, timeout = NULL) {
   invisible(x)
 }
 
-element_set_value <- function(x, text, session, driver) {
-  execute_js_fn_on(
-    paste0("x => x.value = '", text, "'"),
-    x,
-    session = session,
-    driver = driver
-  )
+element_input_type <- function(x, session, driver) {
+  execute_js_fn_on("function(x) {
+    if (x instanceof HTMLSelectElement) {
+      return 'select';
+    }
 
-  if (session == "chromote") {
-    chromote_clear(x, driver = driver)
-    chromote_send_chars(text, driver = driver)
-  } else if (session == "selenium") {
-    x$clear()
-    x$send_keys(text)
+    if (x instanceof HTMLTextAreaElement) {
+      return 'typeable-input';
+    }
+
+    if (x instanceof HTMLInputElement) {
+      if (
+        [
+          'textarea',
+          'text',
+          'url',
+          'tel',
+          'search',
+          'password',
+          'number',
+          'email',
+        ].includes(x.type)
+      ) {
+        return 'typeable-input';
+      } else {
+        return 'other-input';
+      }
+    }
+
+    if (x.isContentEditable) {
+      return 'contenteditable';
+    }
+
+    return 'unknown';
+  }", x, session = session, driver = driver)
+}
+
+element_set_value <- function(x, text, session, driver) {
+  type <- element_input_type(x, session = session, driver = driver)
+
+  if (type == "select") {
+    element_select(
+      x,
+      elem_name = "select",
+      value = text,
+      text = NULL,
+      index = NULL,
+      reset_other = TRUE,
+      session = session,
+      driver = driver
+    )
+  } else if (type %in% c("typeable-input", "contenteditable")) {
+    rest <- partially_type(x, text, session, driver)
+    element_focus(x, session = session, driver = driver)
+
+    if (session == "chromote") {
+      chromote_send_chars(rest, driver = driver)
+    } else if (session == "selenium") {
+      x$send_keys(rest)
+    } else {
+      x$sendKeysToElement(list(rest))
+    }
   } else {
-    x$clearElement()
-    x$sendKeysToElement(list(text))
+    element_focus(x, session = session, driver = driver)
+
+    execute_js_fn_on(paste0("function(x) {
+      (x as HTMLInputElement).value = '", text, "';
+      x.dispatchEvent(new Event('input', {bubbles: true}));
+      x.dispatchEvent(new Event('change', {bubbles: true}));
+    }"), x, session = session, driver = driver)
   }
 }
 
-chromote_clear <- function(
-    x,
-    driver) {
+partially_type <- function(x, text, session, driver) {
+  execute_js_fn_on(paste0("function(x) {
+    const text = '", text, "';
+    const currentValue = x.isContentEditable ? x.innerText : x.value;
+
+    if (text.length <= currentValue.length || !text.startsWith(x.value)) {
+      if (x.isContentEditable) {
+        x.innerText = '';
+      } else {
+        x.value = '';
+      }
+      return text;
+    }
+
+    const originalValue = x.isContentEditable ? x.innerText : x.value;
+
+    if (x.isContentEditable) {
+      x.innerText = '';
+      x.innerText = originalValue;
+    } else {
+      x.value = '';
+      x.value = originalValue;
+    }
+
+    return text.substring(originalValue.length);
+  }"), x, session = session, driver = driver)
+}
+
+chromote_clear <- function(x,
+                           driver) {
   if (is_mac()) {
     click_chromote(x, driver = driver, count = 3)
   } else {
@@ -651,6 +762,7 @@ chromote_clear <- function(
       windowsVirtualKeyCode = 65
     )
   }
+
   chromote_press(
     driver,
     windowsVirtualKeyCode = 8,
@@ -799,7 +911,7 @@ element_send_keys <- function(x, modifiers, keys, session, driver) {
 
 chromote_send_keys <- function(element, driver, keys, modifiers) {
   if (!is.null(element)) {
-    click_chromote(element, driver = driver)
+    chromote_focus(element, driver = driver)
   }
 
   keys <- format_keys(keys, modifiers)
@@ -930,11 +1042,6 @@ element_clear_value <- function(x, session, driver) {
 #'
 #' elem_expect(s("p"), has_text("You found me!"))
 #'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
-#' }
-#'
 #' @export
 elem_scroll_to <- function(x, js = FALSE, timeout = NULL) {
   check_class(x, "selenider_element")
@@ -1024,7 +1131,7 @@ element_scroll_to <- function(x, session, driver) {
 #'   deselected.
 #'
 #' @details
-#' If no arguents apart from `x` are supplied, and `x` is a `select` element,
+#' If no arguments apart from `x` are supplied, and `x` is a `select` element,
 #' all options will be deselected.
 #'
 #' @returns `x`, invisibly.
@@ -1694,11 +1801,6 @@ get_select_element <- function(x,
 #'
 #' # Won't work since the element doesn't have a form ancestor
 #' try(elem_submit(s("a"), timeout = 0.5))
-#'
-#' \dontshow{
-#' # Clean up all connections and invalidate default chromote object
-#' selenider_cleanup()
-#' }
 #'
 #' @export
 elem_submit <- function(x, js = FALSE, timeout = NULL) {
