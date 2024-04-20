@@ -4,9 +4,6 @@
 #' Display an element or collection of elements by fetching the elements and
 #' displaying their HTML contents.
 #'
-#' `print_lazy()` allows an element to be printed without fetching it, by
-#' displaying a summary of the steps that will be taken to reach the element.
-#'
 #' @param x A `selenider_element` or `selenider_elements` object.
 #' @param width The maximum width of the output.
 #' @param ... Not used.
@@ -33,11 +30,6 @@
 #'
 #' print(ss("p"), n = 3)
 #'
-#' s("div") |>
-#'   find_elements("p") |>
-#'   elem_filter(has_text("Text 3")) |>
-#'   print_lazy()
-#'
 #' @export
 print.selenider_element <- function(x,
                                     width = getOption("width"),
@@ -61,6 +53,7 @@ print.selenider_elements <- function(x,
   invisible(x)
 }
 
+#' @export
 format.selenider_element <- function(x,
                                      width = getOption("width"),
                                      ...,

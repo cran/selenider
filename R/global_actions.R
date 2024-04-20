@@ -20,21 +20,28 @@
 #' open_url(session = session, "https://r-project.org")
 #'
 #' @export
-open_url <- function(url, session = NULL) {
+open_url <- function(url, timeout = 60, session = NULL) {
   check_string(url)
+  check_number_decimal(timeout)
   check_class(session, "selenider_session", allow_null = TRUE)
 
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
 
+  check_session_active(session)
+
   driver <- session$driver
 
   if (session$session == "chromote") {
-    promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = 60)
-    driver$Page$navigate(url, wait_ = FALSE)
+    promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = timeout)
+    driver$Page$navigate(url, wait_ = FALSE, timeout_ = timeout)
     driver$wait_for(promise)
+  } else if (session$session == "selenium") {
+    driver$set_timeouts(page_load = timeout * 1000)
+    driver$navigate(url, timeout = timeout)
   } else {
+    driver$setTimeout(milliseconds = timeout * 1000)
     driver$navigate(url)
   }
 
@@ -50,6 +57,7 @@ open_url <- function(url, session = NULL) {
 #' `forward()` reverses the action of `back()`, going to the next page in your
 #' browsing history.
 #'
+#' @param timeout The maximum time to wait for the page to load, in seconds.
 #' @param session A `selenider_session` object. If not specified, the global
 #'   session object (the result of [get_session()]) is used.
 #'
@@ -70,12 +78,15 @@ open_url <- function(url, session = NULL) {
 #' forward()
 #'
 #' @export
-back <- function(session = NULL) {
+back <- function(timeout = 60, session = NULL) {
+  check_number_decimal(timeout)
   check_class(session, "selenider_session", allow_null = TRUE)
 
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
+
+  check_session_active(session)
 
   driver <- session$driver
 
@@ -86,15 +97,17 @@ back <- function(session = NULL) {
     if (index > 1) {
       new_id <- history[[index - 1]]$id
 
-      promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = 60)
-      driver$Page$navigateToHistoryEntry(new_id, wait_ = FALSE)
+      promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = timeout)
+      driver$Page$navigateToHistoryEntry(new_id, wait_ = FALSE, timeout_ = timeout)
       driver$wait_for(promise)
     } else {
       warn_history_page_not_found(next_page = FALSE)
     }
   } else if (session$session == "selenium") {
-    driver$back()
+    driver$set_timeouts(page_load = timeout * 1000)
+    driver$back(timeout = timeout)
   } else {
+    driver$setTimeout(milliseconds = timeout * 1000)
     driver$goBack()
   }
 
@@ -104,12 +117,15 @@ back <- function(session = NULL) {
 #' @rdname back
 #'
 #' @export
-forward <- function(session = NULL) {
+forward <- function(timeout = 60, session = NULL) {
+  check_number_decimal(timeout)
   check_class(session, "selenider_session", allow_null = TRUE)
 
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
+
+  check_session_active(session)
 
   driver <- session$driver
 
@@ -120,15 +136,17 @@ forward <- function(session = NULL) {
     if (index < length(history)) {
       new_id <- history[[index + 1]]$id
 
-      promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = 60)
-      driver$Page$navigateToHistoryEntry(new_id, wait_ = FALSE)
+      promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = timeout)
+      driver$Page$navigateToHistoryEntry(new_id, wait_ = FALSE, timeout_ = timeout)
       driver$wait_for(promise)
     } else {
       warn_history_page_not_found(next_page = TRUE)
     }
   } else if (session$session == "selenium") {
-    driver$forward()
+    driver$set_timeouts(page_load = timeout * 1000)
+    driver$forward(timeout = timeout)
   } else {
+    driver$setTimeout(milliseconds = timeout * 1000)
     driver$goForward()
   }
 
@@ -154,20 +172,27 @@ forward <- function(session = NULL) {
 #' reload()
 #'
 #' @export
-reload <- function(session = NULL) {
+reload <- function(timeout = 60, session = NULL) {
+  check_number_decimal(timeout)
   check_class(session, "selenider_session", allow_null = TRUE)
 
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
 
+  check_session_active(session)
+
   driver <- session$driver
 
   if (session$session == "chromote") {
-    promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = 60)
-    session$driver$Page$reload(wait_ = FALSE)
+    promise <- driver$Page$loadEventFired(wait_ = FALSE, timeout_ = timeout)
+    session$driver$Page$reload(wait_ = FALSE, timeout_ = timeout)
     driver$wait_for(promise)
+  } else if (session$session == "selenium") {
+    driver$set_timeouts(page_load = timeout * 1000)
+    driver$refresh(timeout = timeout)
   } else {
+    driver$setTimeout(milliseconds = timeout * 1000)
     driver$refresh()
   }
 
@@ -198,7 +223,7 @@ refresh <- reload
 #'
 #' open_url("https://www.google.com")
 #'
-#' file_path <- withr::local_tempfile(fileext = "png")
+#' file_path <- withr::local_tempfile(fileext = ".png")
 #'
 #' take_screenshot(file_path)
 #'
@@ -219,6 +244,8 @@ take_screenshot <- function(file = NULL, view = FALSE, session = NULL) {
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
+
+  check_session_active(session)
 
   if (is.null(file)) {
     file <- withr::local_tempfile(fileext = ".png")
@@ -277,6 +304,8 @@ get_page_source <- function(session = NULL, ...) {
     session <- get_session(.env = caller_env())
   }
 
+  check_session_active(session)
+
   driver <- session$driver
 
   if (session$session == "chromote") {
@@ -314,6 +343,8 @@ current_url <- function(session = NULL) {
   if (is.null(session)) {
     session <- get_session(.env = caller_env())
   }
+
+  check_session_active(session)
 
   driver <- session$driver
 

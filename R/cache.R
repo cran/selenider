@@ -38,8 +38,8 @@
 #'
 #' @seealso
 #' * [find_element()] and [find_elements()] to select elements.
-#' * [element_list()] and [elem_flatmap()] if you want to iterate over an
-#'   element collection.
+#' * [element_list()], [find_each_element()] and [find_all_elements()] if you
+#'   want to iterate over an element collection.
 #'
 #' @examplesIf selenider::selenider_available(online = FALSE)
 #' html <- "
@@ -81,6 +81,8 @@
 elem_cache <- function(x, timeout = NULL) {
   check_class(x, c("selenider_element", "selenider_elements"))
   check_number_decimal(timeout, allow_null = TRUE)
+
+  check_active(x)
 
   timeout <- get_timeout(timeout, x$timeout)
 
