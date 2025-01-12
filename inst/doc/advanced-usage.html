@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Advanced usage of selenider</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Advanced usage of selenider</h1>
+
+
+
+<p>selenider exposes some advanced features to allow for more complex
+automation.</p>
+<div id="customizing-the-session-creation" class="section level2">
+<h2>Customizing the session creation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(selenider)</span></code></pre></div>
+<p>[selenider_session()] is really just a wrapper around either
+<code>chromote::ChromoteSession$new()</code>, or
+<code>selenium::selenium_server()</code> and
+<code>selenium::SeleniumSession$new()</code>. selenider exposes
+arguments to these functions (plus some additional options) via the
+<code>options</code> argument.</p>
+<p>The most common argument that you are going to want to use is
+<code>headless</code> in <code>chromote_options()</code>: it allows you
+to run chromote in non-headless mode, meaning that the browser you are
+controlling will be displayed:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="st">&quot;chromote&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">chromote_options</span>(<span class="at">headless =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>Managing selenium options is a bit more complex, since you are can
+provide options to the client <code>selenium_client_options()</code> and
+server <code>selenium_server_options()</code>. One cool thing you can do
+is pass <code>NULL</code> into the <code>server_options</code> parameter
+of <code>selenium_options()</code> to stop selenider from creating its
+own server. This is useful if you have created a server manually (using
+docker, for example):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="st">&quot;selenium&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">selenium_options</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">server_options =</span> <span class="cn">NULL</span>, <span class="co"># Stop selenider from creating a server</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">client_options =</span> <span class="fu">selenium_client_options</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>      <span class="at">host =</span> <span class="st">&quot;localhost&quot;</span>, <span class="co"># Use the host and port of your manually created server</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>      <span class="at">port =</span> 4444L</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    )</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  )</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="accessing-the-underlying-session" class="section level2">
+<h2>Accessing the underlying session</h2>
+<p>While selenider provides a high level interface, sometimes you need
+to access the underlying <code>chromote::ChromoteSession</code> or
+<code>selenium::SeleniumSession</code> to perform more advanced tasks.
+The <code>driver</code> field of a <code>selenider_session()</code> can
+be used to do this.</p>
+<p>This is especially useful for chromote, since much of the
+configuration is done after the session is created:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>chromote_session <span class="ot">&lt;-</span> session<span class="sc">$</span>driver</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>chromote_session<span class="sc">$</span>Browser<span class="sc">$</span><span class="fu">setDownloadBehavior</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">behavior =</span> <span class="st">&quot;allow&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">downloadPath =</span> <span class="st">&quot;&lt;path_to_folder&gt;&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="accessing-underlying-elements" class="section level2">
+<h2>Accessing underlying elements</h2>
+<p>Much like you can access the underlying chromote/selenium session
+behind a selenider session, you can access the chromote/selenium element
+represented by a
+<code>selenider_element</code>/<code>selenider_elements</code> object
+using <code>get_actual_element()</code> and
+<code>get_actual_elements()</code>, respectively.</p>
+<p>If you are using chromote, the <a href="https://chromedevtools.github.io/devtools-protocol/tot/DOM/#type-BackendNodeId">backendNodeId</a>
+of the element is returned, while in selenium’s case, the element is
+returned as a <code>selenium::WebElement</code>. It’s important to note
+that the element in this form is no longer lazy, so should be used as
+soon as possible to avoid errors as the page changes.</p>
+</div>
+<div id="element-collections" class="section level2">
+<h2>Element collections</h2>
+<p>Let’s use selenider to get every link element in the R Project’s
+website.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">open_url</span>(<span class="st">&quot;https://www.r-project.org/&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; Can&#39;t find an existing selenider session.</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; ℹ Creating a new session.</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>links <span class="ot">&lt;-</span> <span class="fu">ss</span>(<span class="st">&quot;a&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>links</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (61) }</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a href=&quot;/&quot;&gt;&lt;img src=&quot;/Rlogo.png&quot; width=&quot;100&quot; height=&quot;78&quot; alt=&quot;R&quot;&gt;&lt;/a&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a href=&quot;/&quot;&gt;[Home]&lt;/a&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; [3] &lt;a href=&quot;https://cran.r-project.org/mirrors.html&quot;&gt;CRAN&lt;/a&gt;</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt; [4] &lt;a href=&quot;/about.html&quot;&gt;About R&lt;/a&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt; [5] &lt;a href=&quot;/logo/&quot;&gt;Logo&lt;/a&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt; [6] &lt;a href=&quot;/contributors.html&quot;&gt;Contributors&lt;/a&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; [7] &lt;a href=&quot;/news.html&quot;&gt;What’s New?&lt;/a&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; [8] &lt;a href=&quot;/bugs.html&quot;&gt;Reporting Bugs&lt;/a&gt;</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; [9] &lt;a href=&quot;/conferences/&quot;&gt;Conferences&lt;/a&gt;</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; [10] &lt;a href=&quot;/search.html&quot;&gt;Search&lt;/a&gt;</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; [11] &lt;a href=&quot;/mail.html&quot;&gt;Get Involved: Mailing Lists&lt;/a&gt;</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; [12] &lt;a href=&quot;https://contributor.r-project.org/&quot;&gt;Get Involved: Contributing&lt;/a&gt;</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; [13] &lt;a href=&quot;https://developer.R-project.org/&quot;&gt;Developer Pages&lt;/a&gt;</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; [14] &lt;a href=&quot;https://blog.r-project.org/&quot;&gt;R Blog&lt;/a&gt;</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; [15] &lt;a href=&quot;/foundation/&quot;&gt;Foundation&lt;/a&gt;</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; [16] &lt;a href=&quot;/foundation/board.html&quot;&gt;Board&lt;/a&gt;</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; [17] &lt;a href=&quot;/foundation/members.html&quot;&gt;Members&lt;/a&gt;</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; [18] &lt;a href=&quot;/foundation/donors.html&quot;&gt;Donors&lt;/a&gt;</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; [19] &lt;a href=&quot;/foundation/donations.html&quot;&gt;Donate&lt;/a&gt;</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; [20] &lt;a href=&quot;/help.html&quot;&gt;Getting Help&lt;/a&gt;</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; ...</span></span></code></pre></div>
+<p>But what actually is <code>links</code>? In some ways, it acts like a
+list:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>links[[<span class="dv">1</span>]]</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; &lt;a href=&quot;/&quot;&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt;   &lt;img src=&quot;/Rlogo.png&quot; width=&quot;100&quot; height=&quot;78&quot; alt=&quot;R&quot;&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; &lt;/a&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>links[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (2) }</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a href=&quot;/&quot;&gt;&lt;img src=&quot;/Rlogo.png&quot; width=&quot;100&quot; height=&quot;78&quot; alt=&quot;R&quot;&gt;&lt;/a&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a href=&quot;/&quot;&gt;[Home]&lt;/a&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">length</span>(links)</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; [1] 61</span></span></code></pre></div>
+<p>But assuming it is a list in all scenarios can result in surprising
+behavior:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">names</span>(links)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;session&quot;     &quot;driver&quot;      &quot;driver_id&quot;   &quot;element&quot;     &quot;timeout&quot;    </span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; [6] &quot;selectors&quot;   &quot;to_be_found&quot;</span></span></code></pre></div>
+<p>To reveal why this is, let’s emulate adding a new link to the page
+using JavaScript.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">execute_js_expr</span>(<span class="st">&quot;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="st">  const link = document.createElement(&#39;a&#39;);</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="st">  link.href = &#39;https://ashbythorpe.github.io/selenider/&#39;;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="st">  link.innerText = &#39;Selenider&#39;;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="st">  document.body.appendChild(link);</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code></pre></div>
+<p>Now let’s look at <code>links</code> again:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>links</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; { selenider_elements (62) }</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; [1] &lt;a href=&quot;/&quot;&gt;&lt;img src=&quot;/Rlogo.png&quot; width=&quot;100&quot; height=&quot;78&quot; alt=&quot;R&quot;&gt;&lt;/a&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; [2] &lt;a href=&quot;/&quot;&gt;[Home]&lt;/a&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; [3] &lt;a href=&quot;https://cran.r-project.org/mirrors.html&quot;&gt;CRAN&lt;/a&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; [4] &lt;a href=&quot;/about.html&quot;&gt;About R&lt;/a&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; [5] &lt;a href=&quot;/logo/&quot;&gt;Logo&lt;/a&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; [6] &lt;a href=&quot;/contributors.html&quot;&gt;Contributors&lt;/a&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; [7] &lt;a href=&quot;/news.html&quot;&gt;What’s New?&lt;/a&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; [8] &lt;a href=&quot;/bugs.html&quot;&gt;Reporting Bugs&lt;/a&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; [9] &lt;a href=&quot;/conferences/&quot;&gt;Conferences&lt;/a&gt;</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; [10] &lt;a href=&quot;/search.html&quot;&gt;Search&lt;/a&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; [11] &lt;a href=&quot;/mail.html&quot;&gt;Get Involved: Mailing Lists&lt;/a&gt;</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; [12] &lt;a href=&quot;https://contributor.r-project.org/&quot;&gt;Get Involved: Contributing&lt;/a&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; [13] &lt;a href=&quot;https://developer.R-project.org/&quot;&gt;Developer Pages&lt;/a&gt;</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; [14] &lt;a href=&quot;https://blog.r-project.org/&quot;&gt;R Blog&lt;/a&gt;</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; [15] &lt;a href=&quot;/foundation/&quot;&gt;Foundation&lt;/a&gt;</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; [16] &lt;a href=&quot;/foundation/board.html&quot;&gt;Board&lt;/a&gt;</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; [17] &lt;a href=&quot;/foundation/members.html&quot;&gt;Members&lt;/a&gt;</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; [18] &lt;a href=&quot;/foundation/donors.html&quot;&gt;Donors&lt;/a&gt;</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; [19] &lt;a href=&quot;/foundation/donations.html&quot;&gt;Donate&lt;/a&gt;</span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; [20] &lt;a href=&quot;/help.html&quot;&gt;Getting Help&lt;/a&gt;</span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; ...</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>links[[<span class="fu">length</span>(links)]]</span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; { selenider_element }</span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt; &lt;a href=&quot;https://ashbythorpe.github.io/selenider/&quot;&gt;</span></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="co">#&gt;   Selenider</span></span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt; &lt;/a&gt;</span></span></code></pre></div>
+<p><code>links</code> has been updated to include the new link!</p>
+<div id="a-lazy-list" class="section level3">
+<h3>A lazy list</h3>
+<p>The core reason behind this strange behavior is selenider’s promise
+of <em>laziness</em>. This means that elements are only ever collected
+from the page right before they are used by an <em>eager</em> function
+(<code>print()</code>, <code>elem_text()</code>,
+<code>elem_click()</code>, etc.). The only thing a selenider element
+actually stores is the <em>path</em> to an element (i.e. the set of
+steps you specified to reach the element), rather than the element
+itself.</p>
+<p>This property offers an array of benefits when compared with the
+eager approach. It offers a far more suitable representation of a
+constantly-changing webpage, and as such side-steps many common errors
+encountered during web automation. It also powers the automatic waiting
+feature that is also offered by selenider.</p>
+<p>The element collection, then, is a generalisation of this concept to
+sets of elements. A <code>selenider_elements</code> object stores the
+path to its elements, but not the elements itself. It therefore cannot
+be represented by a list; for one thing, as seen above, it is
+necessarily unaware of its length.</p>
+<p>For all of the advantages of lazy elements, this choice of structure
+does come with some caveats. The major one is that many list operations
+will not work on an element collection; in fact, you should assume that
+any operation that works on a list will not work on a
+<code>selenider_elements</code> object. This is in part due to the fact
+that R does not natively support custom iterators.</p>
+</div>
+<div id="so-what-can-i-do" class="section level3">
+<h3>So, what <em>can</em> I do?</h3>
+<p>selenider provides an API for working with element collections. All
+of the methods below preserve the laziness of the element collection,
+meaning that none of them will actually fetch any elements from the page
+until the resulting element is used.</p>
+<ul>
+<li><code>elems[[x]]</code> and <code>elems[x]</code> work with
+<em>numeric</em> indices, including negative numbers, allowing you to
+filter elements by position.</li>
+<li><code>elem_filter()</code> and <code>elem_find()</code> allow you to
+filter an element collection or find a single element based on a
+condition.</li>
+<li><code>elem_flatten()</code> allow you to combine multiple elements
+or element collections into a single collection.</li>
+<li><code>find_each_element()</code> and
+<code>find_all_elements()</code> allow you to easily find children of
+all the elements in a collection.</li>
+</ul>
+<p>As seen before, <code>length()</code> can be used on element
+collections to get the number of elements. This is <em>not</em> lazy,
+meaning you shouldn’t rely on this value to always be accurate after it
+is called.</p>
+<p>However, sometimes you want to perform more complex operations on a
+set of elements. One common example is iteration, either in a for loop
+or using <code>lapply()</code>/<code>purrr::map()</code>. Iteration is
+an operation that goes against the idea of a lazy collection: how do you
+iterate over a set that is constantly changing?</p>
+<p>In this situation, if you are willing to sacrifice some of the lazy
+properties of an element collection, use <code>as.list()</code>. This
+function, when called on an element collection <code>elems</code>,
+converts it to the following:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">list</span>(elems[[<span class="dv">1</span>]], elems[[<span class="dv">2</span>]], ..., elems[[n]])</span></code></pre></div>
+<p>Where <code>n</code> is <code>length(elems)</code>.</p>
+<p>Notably, the elements of the list are still lazy, since
+<code>[[</code> preserves laziness on element collections. However, the
+length of the list is not, since the call to <code>length()</code> is
+not lazy.</p>
+<p>Since this is an actual list, it supports a much wider range of
+operations. For example, in selenider’s README, <code>as.list()</code>
+is used to iterate over a collection of links to find their hyperlinks.
+Take a look at <code>as.list.selenider_elements()</code> for more
+examples.</p>
+</div>
+</div>
+<div id="forcing-eager-behaviour" class="section level2">
+<h2>Forcing eager behaviour</h2>
+<p>Sometimes it may be desirable to avoid the lazy behaviour of
+selenider’s elements. This is usually for performance reasons: you may
+have an element represented by a long, complex set of steps, which needs
+to be used many times. By default, selenider will follow the path every
+time the element is used, which can end up being very slow, and may be
+redundant if you know the element’s position is unlikely to change.</p>
+<p><code>elem_cache()</code> can be used to force an element or set of
+elements to be retrieved from the DOM and stored, creating an “eager”
+element. Note the caveat in the docs: further elements created using
+this element will not also be eager, but will use this eager element as
+a starting point.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -350,11 +350,14 @@ browser using selenider.</p>
 automatically for you, but you may want to change some of the options
 from their defaults (the backend, for example). Here, we use chromote as
 a backend (the default), and we set the timeout to 10 seconds (the
-default is 4).</p>
+default is 4). Finally, we’ll use [chromote_options()] to set options
+that are specific to chromote (here we want to disable headless mode,
+which will allow us to see the browser).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>session <span class="ot">&lt;-</span> <span class="fu">selenider_session</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="st">&quot;chromote&quot;</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">timeout =</span> <span class="dv">10</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">timeout =</span> <span class="dv">10</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">chromote_options</span>(<span class="at">headless =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>)</span></code></pre></div>
 <p>The session, once created, will be set as the <em>local session</em>
 inside the current environment, meaning that in this case, it can be
 accessed anywhere in this script, and will be closed automatically when

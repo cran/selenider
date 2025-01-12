@@ -367,16 +367,18 @@ tests to continue running even if <code>elem_expect()</code> fails.</p>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">s</span>(<span class="st">&quot;.random-class&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="fu">elem_expect</span>(is_present)</span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>}) <span class="co"># and closed here!</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; -- Failure: My test ------------------------------------------------------------</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; Condition failed after waiting for 4 seconds:</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; `is_present`</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; i `x` is not present.</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; Where `x` is:</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; The first element with css selector &quot;.random-class&quot;.</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; ! Test failed</span></span></code></pre></div>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Can&#39;t find an existing selenider session.</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; i Creating a new session.</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; -- Failure: My test ------------------------------------------------------------</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; Condition failed after waiting for 4 seconds:</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; `is_present`</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; i `x` is not present.</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; Where `x` is:</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; A selenider element selecting:</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; The first element with css selector &quot;.random-class&quot;.</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; ! Test failed</span></span></code></pre></div>
 </div>
 <div id="using-selenider-with-shinytest2" class="section level2">
 <h2>Using selenider with shinytest2</h2>
@@ -444,16 +446,16 @@ instead.</p>
 <span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>})</span>
 <span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpRTtTRm/st2-8ebae427132/001_.png</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpAvYoip/st2-312f9475b1408/001_.png</span></span>
 <span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpRTtTRm/st2-8ebae427132/001.json</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpAvYoip/st2-312f9475b1408/001.json</span></span>
 <span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpRTtTRm/st2-8ebae427132/002_.png</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpAvYoip/st2-312f9475b1408/002_.png</span></span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt; Can&#39;t compare snapshot to reference when testing interactively.</span></span>
 <span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt; i Run `devtools::test()` or `testthat::test_file()` to see changes.</span></span>
-<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpRTtTRm/st2-8ebae427132/002.json</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; New path: /tmp/RtmpAvYoip/st2-312f9475b1408/002.json</span></span>
 <span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; Test passed</span></span></code></pre></div>
 <p>Note the difference in styles: while in selenider you must specify
 tests explicitly, shinytest2 uses a snapshot-based approach (specifying

@@ -1,3 +1,12 @@
+# selenider 0.4.1
+
+- New `scroll_to()` and `scroll_by()` functions allow you to scroll the page
+  vertically and horizontally, without needing a target element.
+- A new advanced usage vignette (`vignette("advanced-usage", package = "selenider")`)
+  has been added.
+- A message is now printed when a session is created automatically, to avoid
+  confusion.
+
 # selenider 0.4.0
 
 - `find_each_element()` and `find_all_elements()` are new functions that can

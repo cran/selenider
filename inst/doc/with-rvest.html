@@ -352,7 +352,9 @@ webpages rather than interactive ones.</p>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;     back, forward</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(selenider)</span></code></pre></div>
 <p>To start, let’s open <a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">open_url</span>(<span class="st">&quot;https://www.r-project.org/&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">open_url</span>(<span class="st">&quot;https://www.r-project.org/&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; Can&#39;t find an existing selenider session.</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; ℹ Creating a new session.</span></span></code></pre></div>
 <p>First, we will interact with the website with selenider. We would
 like to find the most recent post by R on Mastodon, and follow the link
 to the original post.</p>
@@ -383,7 +385,7 @@ be wrapped in a <code>&lt;body&gt;</code> tag.</p>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] &lt;body&gt;&lt;div class=&quot;status__content&quot; tabindex=&quot;0&quot;&gt;&lt;div class=&quot;status__conte ...</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="fu">html_text2</span>(rvest_element)</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Registration deadline is this Sunday!\n\nFrom: @R_Contributors\nhttps://hachyderm.io/@R_Contributors/112099342257590328&quot;</span></span></code></pre></div>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Planning your 2025?\n\nSee the confirmed and tentative dates for R Dev Days this year: https://contributor.r-project.org/events/r-dev-days/\n\nSave the dates to collaborate on contributions to base #RStats and R Contributor infrastructure. More details on the above link!&quot;</span></span></code></pre></div>
 <p>Reading the HTML of an entire page can be done using
 <code>get_page_source()</code>. Note that
 <code>rvest::html_element()</code> is equivalent to
@@ -392,7 +394,7 @@ be wrapped in a <code>&lt;body&gt;</code> tag.</p>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;.columns-area&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;.status__content&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">html_text2</span>()</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Registration deadline is this Sunday!\n\nFrom: @R_Contributors\nhttps://hachyderm.io/@R_Contributors/112099342257590328&quot;</span></span></code></pre></div>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Planning your 2025?\n\nSee the confirmed and tentative dates for R Dev Days this year: https://contributor.r-project.org/events/r-dev-days/\n\nSave the dates to collaborate on contributions to base #RStats and R Contributor infrastructure. More details on the above link!&quot;</span></span></code></pre></div>
 
 
 

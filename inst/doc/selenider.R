@@ -12,11 +12,15 @@ knitr::opts_chunk$set(
 ## ----setup--------------------------------------------------------------------
 library(selenider)
 
-## -----------------------------------------------------------------------------
-session <- selenider_session(
-  "chromote",
-  timeout = 10
-)
+## ----eval=FALSE---------------------------------------------------------------
+#  session <- selenider_session(
+#    "chromote",
+#    timeout = 10,
+#    options = chromote_options(headless = FALSE)
+#  )
+
+## ----include=FALSE------------------------------------------------------------
+session <- selenider_session()
 
 ## -----------------------------------------------------------------------------
 # Bad (unless you only need to use the session inside the function)
